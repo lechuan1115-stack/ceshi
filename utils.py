@@ -43,10 +43,11 @@ def save_checkpoint(state, is_best, fpath='checkpoint.pth.tar'):
 
 class Logger(object):
     """
-    Write console output to external text file.
-    
+    Write console output to an external text file.
+
     Code imported from https://github.com/Cysu/open-reid/blob/master/reid/utils/logging.py.
     """
+
     def __init__(self, fpath=None):
         self.console = sys.stdout
         self.file = None
@@ -58,7 +59,7 @@ class Logger(object):
         self.close()
 
     def __enter__(self):
-        pass
+        return self
 
     def __exit__(self, *args):
         self.close()
@@ -75,6 +76,6 @@ class Logger(object):
             os.fsync(self.file.fileno())
 
     def close(self):
-        self.console.close()
-        if self.file is not None:
+        # Avoid closing sys.stdout so subsequent prints continue to work.
+        if self.file is not None and not self.file.closed:
             self.file.close()
